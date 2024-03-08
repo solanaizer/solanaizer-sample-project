@@ -1,0 +1,13 @@
+name: "Audit Solana Contracts"
+
+on:
+  pull_request:
+    types: [opened, reopened, closed, labeled]
+
+
+jobs:
+  setup:
+    name: Simple console.log
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World 👋🏻"
