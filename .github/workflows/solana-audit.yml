@@ -9,10 +9,9 @@ jobs:
     name: Run
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Run Solana AI Smart Contract Audit
-        uses: solanaizer/solanaizer-action@0.1.2
+        uses: solanaizer/solanaizer-action@0.1.3
         env:
           OPENAPI_TOKEN: ${{ secrets.OPENAPI_TOKEN }}
