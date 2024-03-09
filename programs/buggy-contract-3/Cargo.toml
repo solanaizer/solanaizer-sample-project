@@ -1,12 +1,12 @@
 [package]
-name = "solanaizer-sample-project"
+name = "buggy-contract-3"
 version = "0.1.0"
-edition = "2021"
 description = "Created with Anchor"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "solanaizer_sample_project"
+name = "buggy_contract_3"
 
 [features]
 no-entrypoint = []
