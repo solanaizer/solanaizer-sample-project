@@ -1,4 +1,4 @@
-name: "Audit Solana Contracts"
+name: "Audit Solana Contracts :)"
 
 on:
   pull_request:
