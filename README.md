@@ -41,8 +41,8 @@ TBD
  
 ## Team 👨🏻‍💻👨🏻‍💻👨🏻‍💻👨🏻‍💻
 
-- [Alex Straw](https://github.com/alex-straw)
-- [Dimitris Dinis Gridian](https://github.com/DinisDimitris)
-- [Jean-Philippe Monette](https://github.com/jpmonette)
-- [Michal Hoffman](https://github.com/MZHoffman)
-- [Mikołaj Kącki](https://github.com/mkacki98)
+- [Alex Straw](https://github.com/alex-straw) (Engineer)
+- [Dimitris Dinis Gridian](https://github.com/DinisDimitris) (Engineer)
+- [Jean-Philippe Monette](https://github.com/jpmonette) (Engineer)
+- [Michal Hoffman](https://github.com/MZHoffman) (Engineer)
+- [Mikołaj Kącki](https://github.com/mkacki98) (Engineer)
