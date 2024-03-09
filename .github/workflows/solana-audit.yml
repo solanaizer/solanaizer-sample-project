@@ -1,4 +1,4 @@
-name: "Audit Solana Contracts :)"
+name: 'Audit Solana Contracts :)'
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: "3.x" # Setup a Python 3.x environment to run your script
+          python-version: '3.x' # Setup a Python 3.x environment to run your script
 
       - name: Install dependencies
         run: |
@@ -23,6 +23,6 @@ jobs:
           # Install any dependencies here, if your script requires any.
 
       - name: Run custom script
-        run: python test.py # This will execute your test.py script and output its results
+        run: python solanaizer.py --fp test.rs # This will execute your test.py script and output its results
 
       - run: echo "Hello World 👋🏻"
