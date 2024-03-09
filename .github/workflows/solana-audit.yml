@@ -17,9 +17,6 @@ jobs:
         with:
           python-version: '3.x' # Setup a Python 3.x environment to run your script
 
-      - name: Monorepo install
-        run: yarn install
-  
       - name: Install dependencies
         working-directory: ./.github/scripts
         run: |
@@ -42,6 +39,7 @@ jobs:
               JSON.parse(raw);
             } catch(e) {
               console.log('INVALID JSON FORMAT FROM 🐍:', raw)
+              process.exit(1)
             }
 
             console.log('Raw JSON', raw)
@@ -64,15 +62,17 @@ jobs:
               });
             }
             
-            let body = `## Solanaizer Audit Results 🤖\n\nFind below all the vulnerabilities found in your smart contracts:\n\n${table.join("\n")})}`
+            let body = `## Solanaizer Audit Results 🤖\n\nFind below all the vulnerabilities found in your smart contracts:`
 
             if (data.length !== 0) {
+              body += `\n\n${table.join("\n")})}`
               body += '\n<img src="https://media0.giphy.com/media/Xyj49ooQtsFD16z27J/giphy.gif"/>'
+              console.table(data);
             } else {
-              body += '0 vulnerabilities found!\n\n<img src="https://media0.giphy.com/media/Ogak8XuKHLs6PYcqlp/giphy.gif"/>'
+              body += '\n\n0 vulnerabilities found!\n\n<img src="https://media0.giphy.com/media/Ogak8XuKHLs6PYcqlp/giphy.gif"/>'
+              console.log('No vulnerabilities 😘')
             }
 
-            console.table(data);
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
