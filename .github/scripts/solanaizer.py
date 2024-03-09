@@ -3,7 +3,7 @@ from ai_validator import analyze_vulnerability_with_gpt
 from pathlib import Path
 import json
 
-API_KEY = "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"
+API_KEY = os.environ["OPENAPI_TOKEN"]
 
 def validate_file_content(file_path: Path):
     if file_path.suffix != ".rs":
@@ -24,4 +24,4 @@ if __name__ == "__main__":
     file_path_bug_free = Path(bug_free + suffix)
     file_path_buggy = Path(non_bug_free + suffix)
 
-    print(json.dumps(validate_file_content(file_path_bug_free) + validate_file_content(file_path_buggy), indent=4))
+    print(json.dumps(validate_file_content(file_path_bug_free) + validate_file_content(file_path_buggy)))
