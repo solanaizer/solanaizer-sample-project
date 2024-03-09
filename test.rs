@@ -1,122 +1,71 @@
-use ink_lang as ink;
+use anchor_lang::prelude::*;
+use anchor_spl::token::{self, Token, TokenAccount, Transfer};
 
-#[ink::contract]
-mod time_lock_savings {
-    use ink_prelude::vec::Vec;
-    use ink_prelude::string::String;
-    use ink_storage::{
-        traits::{PackedLayout, SpreadLayout},
-        collections::{HashMap as StorageHashMap},
-    };
+declare_id!("Fg6PaFyLsJ9ZedMJr9bG5PuBuQtDpc8xxxXXXXXX"); // Replace with your actual program ID
 
-    #[ink(storage)]
-    pub struct TimeLockSavings {
-        owner: AccountId,
-        release_time: Timestamp,
-        balances: StorageHashMap<AccountId, Balance>,
+#[program]
+pub mod solana_timelock {
+    use super::*;
+
+    pub fn create_timelock(ctx: Context<CreateTimelock>, unlock_time: i64) -> Result<()> {
+        let timelock_account = &mut ctx.accounts.timelock_account;
+        timelock_account.owner = *ctx.accounts.owner.key;
+        timelock_account.unlock_time = unlock_time;
+        Ok(())
     }
 
-    #[ink(event)]
-    pub struct Deposit {
-        #[ink(topic)]
-        depositor: AccountId,
-        amount: Balance,
+    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
+        let timelock_account = &ctx.accounts.timelock_account;
+
+        // Ensure that the current time is greater than the unlock time
+        require!(
+            Clock::get()?.unix_timestamp > timelock_account.unlock_time,
+            ErrorCode::UnlockTimeNotReached
+        );
+
+        // Transfer tokens from the timelock account to the owner's account
+        let cpi_accounts = Transfer {
+            from: ctx.accounts.timelock_token_account.to_account_info(),
+            to: ctx.accounts.owner_token_account.to_account_info(),
+            authority: ctx.accounts.timelock_account.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        token::transfer(cpi_ctx, amount)?;
+
+        Ok(())
     }
+}
 
-    #[ink(event)]
-    pub struct Withdrawal {
-        #[ink(topic)]
-        withdrawer: AccountId,
-        amount: Balance,
-    }
+#[derive(Accounts)]
+pub struct CreateTimelock<'info> {
+    #[account(init, payer = owner, space = 8 + 32 + 8)]
+    pub timelock_account: Account<'info, TimelockAccount>,
+    #[account(mut)]
+    pub owner: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
 
-    impl TimeLockSavings {
-        #[ink(constructor)]
-        pub fn new(owner: AccountId, release_time: Timestamp) -> Self {
-            Self {
-                owner,
-                release_time,
-                balances: StorageHashMap::new(),
-            }
-        }
+#[derive(Accounts)]
+pub struct Withdraw<'info> {
+    #[account(mut, has_one = owner)]
+    pub timelock_account: Account<'info, TimelockAccount>,
+    #[account(mut)]
+    pub timelock_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub owner_token_account: Account<'info, TokenAccount>,
+    pub owner: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+}
 
-        #[ink(message)]
-        pub fn deposit(&mut self) {
-            let caller = self.env().caller();
-            let value = self.env().transferred_balance();
+#[account]
+pub struct TimelockAccount {
+    pub owner: Pubkey,
+    pub unlock_time: i64,
+}
 
-            unsafe
-
-            assert!(value > 0, "Deposit amount must be greater than 0");
-
-            self.balances
-                .entry(caller)
-                .and_modify(|balance| *balance += value)
-                .or_insert(value);
-
-            self.env().emit_event(Deposit {
-                depositor: caller,
-                amount: value,
-            });
-        }
-
-        #[ink(message)]
-        pub fn withdraw(&mut self, amount: Balance) {
-            let caller = self.env().caller();
-
-            assert!(amount > 0, "Withdrawal amount must be greater than 0");
-
-            let balance = self.balances.get_mut(&caller).unwrap_or_else(|| {
-                env_panic(b"Insufficient balance");
-            });
-
-            assert!(*balance >= amount, "Insufficient balance");
-
-            *balance -= amount;
-
-            self.env().transfer(caller, amount).expect("Transfer failed");
-
-            self.env().emit_event(Withdrawal {
-                withdrawer: caller,
-                amount,
-            });
-        }
-
-        #[ink(message)]
-        pub fn get_contract_balance(&self) -> Balance {
-            self.env().balance()
-        }
-
-        #[ink(message)]
-        pub fn get_release_time(&self) -> Timestamp {
-            self.release_time
-        }
-
-        #[ink(message)]
-        pub fn get_owner(&self) -> AccountId {
-            self.owner
-        }
-    }
-
-    impl Default for TimeLockSavings {
-        fn default() -> Self {
-            Self::new(Default::default(), Default::default())
-        }
-    }
-
-    #[cfg(not(feature = "ink-as-dependency"))]
-    #[ink::contract(env = DefaultEnvironment)]
-    mod impls {
-        use super::*;
-
-        #[ink(storage)]
-        pub struct DefaultEnvironment {}
-
-        impl DefaultEnvironment {
-            #[ink(constructor)]
-            pub fn new() -> Self {
-                Self {}
-            }
-        }
-    }
+#[error_code]
+pub enum ErrorCode {
+    #[msg("The unlock time has not yet been reached.")]
+    UnlockTimeNotReached,
 }
