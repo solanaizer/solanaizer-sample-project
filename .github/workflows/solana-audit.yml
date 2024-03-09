@@ -32,14 +32,16 @@ jobs:
             const execSync = require('child_process').execSync;
             const body = execSync('python ./.github/scripts/test.py', { encoding: 'utf-8' });
 
+            const data = JSON.parse(body).map(line => ({...line, severity: severity === 'HIGH' ? 'High 🥵' : severity === 'MEDIUM' ? 'Medium 🤷🏻‍♂️' : 'Low 😗'}));
+
             const table = ['| Severity  | Message | Error Code | Lines |']
             table.push('| ------------- | ------------- | ------------- | ------------- |')
 
-            JSON.parse(body).forEach(line => {
+            Jdata.forEach(line => {
               table.push(`| ${line.severity} | ${line.message} | ${line.errorCode} | ${JSON.stringify(line.lines)} |`)
             })
 
-            console.table(JSON.parse(body));
+            console.table(data);
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
