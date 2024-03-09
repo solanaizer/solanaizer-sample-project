@@ -27,3 +27,14 @@ jobs:
       - name: Run custom script
         working-directory: ./.github/scripts
         run: python test.py | node formatOutput.js #solanaizer.py --fp test.rs # This will execute your test.py script and output its results
+      
+      - name: Run custom script  
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '# 👋 Thanks for reporting!'
+            })
