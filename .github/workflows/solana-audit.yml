@@ -33,30 +33,40 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const execSync = require("child_process").execSync;
-            const body = execSync("python ./.github/scripts/test.py", { encoding: "utf-8" });
+            const raw = execSync("python ./.github/scripts/test.py", { encoding: "utf-8" });
             
-            const data = JSON.parse(body).map(line => ({
+            const data = JSON.parse(raw).map(line => ({
               ...line,
               severity: line.severity === "HIGH" ? "High 🥵" : line.severity === "MEDIUM" ? "Medium 🤷🏻‍♂️" : "Low 😗",
             }));
             
             const table = ["| Severity 🌡️  | Message 💭 | Error Code 😬 | Filename 📜 | Lines #️⃣ |"];
-            table.push("| :-------------: | ------------- | :-------------: | ------------- | | :-------------: |");
+            table.push("| :-------------: | ------------- | :-------------: | ------------- | :-------------: |");
             
-            data.forEach(line => {
-              table.push(
-                `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\` | \`${
-                  line.lines.join(", ")
-                }\` |`,
-              );
-            });
+            if (data.length !== 0) {
+              data.forEach(line => {
+                table.push(
+                  `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\` | \`${
+                    line.lines.join(", ")
+                  }\` |`,
+                );
+              });
+            }
             
+            let body = `## Solanaizer Audit Results 🤖\n\nFind below all the vulnerabilities found in your smart contracts:\n\n${table.join("\n")})}`
+
+            if (data.length !== 0) {
+              body += '\n<img src="https://media0.giphy.com/media/Xyj49ooQtsFD16z27J/giphy.gif"/>'
+            } else {
+              body += '0 vulnerabilities found!\n\n<img src="https://media0.giphy.com/media/Ogak8XuKHLs6PYcqlp/giphy.gif"/>'
+            }
+
             console.table(data);
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Solanaizer Audit Results 😜\n\n${table.join("\n")})}`,
+              body,
             });
           
