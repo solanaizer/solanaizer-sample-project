@@ -13,6 +13,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Solana AI Smart Contract Audit
-        uses: solanaizer/solanaizer-action@0.1.0
+        uses: solanaizer/solanaizer-action@0.1.1
         env:
           OPENAPI_TOKEN: ${{ secrets.OPENAPI_TOKEN }}
