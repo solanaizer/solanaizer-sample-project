@@ -38,6 +38,8 @@ jobs:
             const execSync = require("child_process").execSync;
             const raw = execSync("python ./.github/scripts/solanaizer.py", { encoding: "utf-8" });
             
+            console.log('Raw JSON', raw)
+
             const data = JSON.parse(raw).map(line => ({
               ...line,
               severity: line.severity === "HIGH" ? "High 🥵" : line.severity === "MEDIUM" ? "Medium 🤷🏻‍♂️" : "Low 😗",
