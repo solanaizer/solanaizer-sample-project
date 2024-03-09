@@ -18,6 +18,7 @@ jobs:
           python-version: '3.x' # Setup a Python 3.x environment to run your script
 
       - name: Install dependencies
+        working-directory: ./.github/scripts
         run: |
           python -m pip install --upgrade pip # (Optional) Upgrade pip
           pip install -r requirements.txt 
