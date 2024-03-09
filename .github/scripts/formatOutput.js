@@ -19,7 +19,8 @@ function convertToMarkdownTable(data) {
     let table = "| Severity | Message | Error Code | Lines |\n";
     table += "|----------|---------|------------|-------|\n";
     data.forEach(item => {
-        table += `| ${item.severity} | ${item.message} | ${item.errorCode} | ${item.lines.join(', ')} |\n`;
+      table += `| ${item.severity} | ${item.message} | ${item.errorCode} | ${item.lines.join(', ')} |\n`;
     });
+    console.log("🚀 ~ convertToMarkdownTable ~ table:", table)
     return table;
 }
