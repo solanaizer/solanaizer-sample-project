@@ -42,7 +42,6 @@ jobs:
               process.exit(1)
             }
 
-            console.log('Raw JSON', raw)
 
             const data = JSON.parse(raw).map(line => ({
               ...line,
@@ -73,7 +72,6 @@ jobs:
               console.log('No vulnerabilities 😘')
             }
 
-
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -81,3 +79,6 @@ jobs:
               body,
             });
           
+            if (data.length !==) {
+              process.exit(1)
+            }
