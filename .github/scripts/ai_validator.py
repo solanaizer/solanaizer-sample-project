@@ -13,7 +13,7 @@ class ChatRequest:
             sort_keys=True, indent=4)
 
 
-def analyze_vulnerability_with_gpt(api_key, file_content):
+def analyze_vulnerability_with_gpt(api_key, file_content, filename):
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
@@ -21,7 +21,7 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
         "Accept": "application/json"
     }
 
-    prompt = f"Detect all vulnerabilities within the provided Rust smart contract code for Solana blockchain. \n '{file_content}' \n Respond in JSON format, filling the following properties for each vulnerability found \n vulnerabilities: {[]} \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\n line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
+    prompt = f"Review the code for any vulnerabilities related to access control. If no such vulnerabilities exist, return an empty JSON. File contents follow: \n '{file_content}' \n Respond in JSON format, filling the following properties for each vulnerability found \n vulnerabilities: {[]} \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\n line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
 
     chat_request = ChatRequest(
         model="gpt-3.5-turbo",
@@ -34,9 +34,7 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
         response_json = response.json()
         response_content = response_json["choices"][0]["message"]["content"]
         if (response_content != ""):
-            analyze_response_text(response_content)
-        else:
-            print("No vulnerabilities found.")
+            return analyze_response_text(response_content, filename)
     else:
         if response.status_code == 403:
             error_message = "Authorization failed. Please check your API key permissions."
@@ -49,27 +47,30 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
         raise IOError(error_message)
 
 
-def analyze_response_text(response_content):
-    try:
-        response_content = response_content.strip('`').strip('json')
-        response_dict = json.loads(response_content)
-        if "vulnerabilities" not in response_dict:
-            print(response_dict)
-            print("No vulnerabilities found.")
-            return
-        
-        vulnerabilities = response_dict["vulnerabilities"]
-        for vulnerability in vulnerabilities:
-            message = vulnerability["message"]
-            severity = vulnerability["severity"]
-            lines = vulnerability["line"]
-            
-            print("Message:", message)
-            print("Severity:", severity)
-            print("Lines:", lines)
-            print("\n")
+def analyze_response_text(response_content, filename):
 
-    except JSONDecodeError:
-        print("Failed to parse response content as JSON. Response content may not be in the expected format.")
-        print("Response Content:", response_content)
+    response_content = response_content.strip('`').strip('json')
+    response_dict = json.loads(response_content)
+    if "vulnerabilities" not in response_dict:
+        return
+    
+    vulnerabilities = response_dict["vulnerabilities"]
+
+    empty_vulnerabilities = []
+    #for vulnerability in vulnerabilities:
+    #    message = vulnerability["message"]
+    #    severity = vulnerability["severity"]
+    #    lines = vulnerability["line"]
+    #    
+    #    print("Message:", message)
+    #    print("Severity:", severity)
+    #    print("Lines:", lines)
+    #    print("\n")
+    if vulnerabilities: 
+        vulnerabilities[0]["filename"] = filename.__str__()
+        vulnerabilities[0]["errorCode"] = "REENTRY_ERROR"
+        return vulnerabilities
+
+    else:
+        return empty_vulnerabilities
 
