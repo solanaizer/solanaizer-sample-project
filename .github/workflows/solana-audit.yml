@@ -46,7 +46,7 @@ jobs:
             if (data.length !== 0) {
               data.forEach(line => {
                 table.push(
-                  `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\`<br>\`${
+                  `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\`<br>Lines: \`${
                     line.lines.join(", ")
                   }\` |`,
                 );
