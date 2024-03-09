@@ -29,11 +29,11 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const { markdownTable } = require('markdown-table')
-
             const execSync = require('child_process').execSync;
             const body = execSync('python ./.github/scripts/test.py', { encoding: 'utf-8' });
 
+            const table = ['| Severity  | Message | Error Code | Lines |\n']
+            table.push('| ------------- | ------------- | ------------- | ------------- |\n')
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
