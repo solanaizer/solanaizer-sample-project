@@ -78,7 +78,5 @@ jobs:
               repo: context.repo.repo,
               body,
             });
-          
-            if (data.length !== 0) {
-              process.exit(1)
-            }
+            core.setFailed('Job run failed')
+            
