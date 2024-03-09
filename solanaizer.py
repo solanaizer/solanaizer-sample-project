@@ -3,8 +3,10 @@ from vulnerability_types import VulnerabilityResult
 import re
 import os
 import sys
+from ai_validator import validate_vulnerability_with_gpt
 from pathlib import Path
 
+API_KEY = "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"
 def validate_file_content(file_path):
     if file_path.suffix != ".rs":
         print("Not a Rust file.")
@@ -23,6 +25,10 @@ def validate_file_content(file_path):
             line_of_code = captures.group(0)
             line_number = content[:captures.start()].count('\n') + 1
             status, fix = "Status", "Fix"
+
+            print("Vulnerability found:")
+            validate_vulnerability_with_gpt(API_KEY, check.title, check.severity, line_number, line_of_code, content)
+
             vulnerabilities.append(VulnerabilityResult(
                 vulnerability_id=check.id,
                 file=str(file_path),
@@ -34,15 +40,12 @@ def validate_file_content(file_path):
                 persistence_of_safe_pattern="No",
                 safe_pattern=check.safe_pattern
             ))
+            for vulnerability in vulnerabilities:
+                print(vulnerability)
 
         if safe_pattern_regex:
             for _mat in safe_pattern_regex.finditer(content):
                 pass
-
-    # Print vulnerabilities
-    print("Vulnerabilities found:")
-    for vulnerability in vulnerabilities:
-        print(vulnerability)
 
 
 if __name__ == "__main__":
