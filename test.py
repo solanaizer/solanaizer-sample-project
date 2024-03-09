@@ -1,13 +1,15 @@
 import json
 
 def get_test_json():
-    #  cDefine a Python dictionary that we'll convert to a JSON object
-    test_data = {
-        "name": "John Doe",
-        "age": 30,
-        "is_active": True,
-        "skills": ["Python", "JavaScript", "SQL"]
-    }
+    #  Define a Python dictionary that we'll convert to a JSON object
+    test_data = [
+        {
+        "severity": "HIGH",
+        "message": "This error blablabla",
+        "errorCode": "REENTRY_ERROR";
+        "lines": [5,10];
+        }
+]
     
     # Convert the Python dictionary to a JSON string
     json_data = json.dumps(test_data)
