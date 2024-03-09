@@ -12,7 +12,7 @@ process.stdin.on('end', function() {
     const inputData = JSON.parse(inputJSON);
     // Convert inputData to Markdown table
     const markdownTable = convertToMarkdownTable(inputData);
-    console.log(markdownTable);
+    console.log("markdownTable");
 });
 
 function convertToMarkdownTable(data) {
