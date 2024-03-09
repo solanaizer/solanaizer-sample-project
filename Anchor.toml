@@ -5,7 +5,12 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-solanaizer_sample_project = "5vAdQX1K57tfQeEn1rp7eRLqmo9rG6Yx2bBiqETEoKDZ"
+bug-free-contract-1 = "5dtf5Ce9DSQfkSVteaj9ByRHock49YqjMLuAnCrSkYtQ"
+bug-free-contract-2 = "5h5NPWfoMQBVWoztmvu13QQw1uzx7TSLSkazzzYw3U3h"
+bug-free-contract-3 = "3UxKcHeto7wDea3isc6j33N2ZJJ61J89JyjAdYmQkfWH"
+buggy-contract-1 = "CCsuJ3u42ioNjNRf9QXqKaM6EeXdv4TVQmcj8j5MUXmk"
+buggy-contract-2 = "GjQDguFs71C9q154cd9Cr6DwDF5wz62pTdv3u5FxUtgP"
+buggy-contract-3 = "EJ51jW9nAV2vvfMk3GCqAjhQRiJg6FAugtrXSgXUbmyJ"
 
 [registry]
 url = "https://api.apr.dev"
