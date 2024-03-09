@@ -5,7 +5,7 @@ import json
 
 API_KEY = os.environ["OPENAPI_TOKEN"]
 
-def validate_file_content(file_path):
+def validate_file_content(file_path: Path):
     if file_path.suffix != ".rs":
         print("Not a Rust file.")
         return

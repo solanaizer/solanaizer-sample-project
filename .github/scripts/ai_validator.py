@@ -1,5 +1,6 @@
 import requests
 import json
+from pathlib import Path
 
 
 class ChatRequest:
@@ -12,7 +13,7 @@ class ChatRequest:
             sort_keys=True, indent=4)
 
 
-def analyze_vulnerability_with_gpt(api_key, file_content, filename):
+def analyze_vulnerability_with_gpt(api_key, file_content, filename: Path):
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
@@ -20,7 +21,7 @@ def analyze_vulnerability_with_gpt(api_key, file_content, filename):
         "Accept": "application/json"
     }
 
-    prompt = """
+    prompt = f"""
 [no prose]
 You need to answer at all time using a JSON object of this format:
 
@@ -33,10 +34,14 @@ You are an Solana smart contract auditor. You are an expert at finding vulnerabi
 
 You have to find vulnerabilities in this smart contract written in Rust:
 
-{file_content}
+```rs
+'{file_content}'
+```
 
 NEVER EVER EVER RETURN ANYTHING ELSE THAN JSON. DON'T RETURN MARKDOWN
 """
+
+
 
     chat_request = ChatRequest(
         model="gpt-3.5-turbo",
@@ -49,7 +54,12 @@ NEVER EVER EVER RETURN ANYTHING ELSE THAN JSON. DON'T RETURN MARKDOWN
         response_json = response.json()
         response_content = response_json["choices"][0]["message"]["content"].replace("```json", "").replace("```", "")
         if (response_content != ""):
-            return json.loads(response_content)
+            parsed = json.loads(response_content)
+            
+            for item in parsed:
+                item["filename"] = filename.relative_to(".").__str__()
+
+            return parsed
         else:
             return []
     else:
