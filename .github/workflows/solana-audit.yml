@@ -13,5 +13,5 @@ jobs:
 
       - name: Run Solana AI Smart Contract Audit
         uses: solanaizer/solanaizer-action@0.1.5
-        env:
-          OPENAPI_TOKEN: ${{ secrets.OPENAPI_TOKEN }}
+        with:
+          openapi-token: ${{ secrets.OPENAPI_TOKEN }}
