@@ -1,90 +1,125 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    metadata::{
+        create_master_edition_v3, create_metadata_accounts_v3, CreateMasterEditionV3,
+        CreateMetadataAccountsV3, Metadata, 
+    }, 
+    token::{mint_to, Mint, MintTo, Token, TokenAccount},
+};
+use mpl_token_metadata::{
+    pda::{find_master_edition_account, find_metadata_account},
+    state::DataV2,
+};
 
-declare_id!("5dtf5Ce9DSQfkSVteaj9ByRHock49YqjMLuAnCrSkYtQ");
-
+declare_id!("<UPDATE HERE>");
 #[program]
-pub mod bug_free_contract_1 {
+pub mod solana_nft_anchor {
+
     use super::*;
 
-    pub fn create_timelock(ctx: Context<CreateTimelock>, unlock_time: i64) -> Result<()> {
-        require!(unlock_time >= 0, ErrorCode::InvalidUnlockTime);
+    pub fn init_nft(
+        ctx: Context<InitNFT>,
+        name: String,  
+        symbol: String, 
+        uri: String,
+    ) -> Result<()> {
+        // create mint account
+        let cpi_context = CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            MintTo {
+                mint: ctx.accounts.mint.to_account_info(),
+                to: ctx.accounts.associated_token_account.to_account_info(),
+                authority: ctx.accounts.signer.to_account_info(),
+            },
+        );
 
-        let timelock_account = &mut ctx.accounts.timelock_account;
-        
-        // Prevent re-initialization of the timelock account
-        require!(!timelock_account.is_initialized, ErrorCode::AlreadyInitialized);
+        mint_to(cpi_context, 1)?;
 
-        timelock_account.owner = *ctx.accounts.owner.key;
-        timelock_account.unlock_time = unlock_time;
-        timelock_account.is_initialized = true; // Mark as initialized
-        Ok(())
-    }
+        // create metadata account
+        let cpi_context = CpiContext::new(
+            ctx.accounts.token_metadata_program.to_account_info(),
+            CreateMetadataAccountsV3 {
+                metadata: ctx.accounts.metadata_account.to_account_info(),
+                mint: ctx.accounts.mint.to_account_info(),
+                mint_authority: ctx.accounts.signer.to_account_info(),
+                update_authority: ctx.accounts.signer.to_account_info(),
+                payer: ctx.accounts.signer.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                rent: ctx.accounts.rent.to_account_info(),
+            },
+        );
 
-    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
-        let timelock_account = &ctx.accounts.timelock_account;
-
-        // Ensure timelock_account was initialized with a valid unlock_time
-        require!(timelock_account.unlock_time > 0, ErrorCode::TimelockNotInitialized);
-
-        // Check if the owner of the withdrawal is the same as the timelock account owner
-        require!(timelock_account.owner == *ctx.accounts.owner.key, ErrorCode::Unauthorized);
-
-        // Ensure that the current time is greater than the unlock time
-        require!(Clock::get()?.unix_timestamp > timelock_account.unlock_time, ErrorCode::UnlockTimeNotReached);
-
-        // Transfer tokens from the timelock account to the owner's account
-        let cpi_accounts = Transfer {
-            from: ctx.accounts.timelock_token_account.to_account_info(),
-            to: ctx.accounts.owner_token_account.to_account_info(),
-            authority: ctx.accounts.owner.to_account_info(),
+        let data_v2 = DataV2 {
+            name: name,
+            symbol: symbol,
+            uri: uri,
+            seller_fee_basis_points: 0,
+            creators: None,
+            collection: None,
+            uses: None,
         };
-        let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-        token::transfer(cpi_ctx, amount)?;
+
+        create_metadata_accounts_v3(cpi_context, data_v2, false, true, None)?;
+
+        //create master edition account
+        let cpi_context = CpiContext::new(
+            ctx.accounts.token_metadata_program.to_account_info(),
+            CreateMasterEditionV3 {
+                edition: ctx.accounts.master_edition_account.to_account_info(),
+                mint: ctx.accounts.mint.to_account_info(),
+                update_authority: ctx.accounts.signer.to_account_info(),
+                mint_authority: ctx.accounts.signer.to_account_info(),
+                payer: ctx.accounts.signer.to_account_info(),
+                metadata: ctx.accounts.metadata_account.to_account_info(),
+                token_program: ctx.accounts.token_program.to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                rent: ctx.accounts.rent.to_account_info(),
+            },
+        );
+
+        create_master_edition_v3(cpi_context, None)?;
 
         Ok(())
     }
 }
 
 #[derive(Accounts)]
-pub struct CreateTimelock<'info> {
-    #[account(init, payer = owner, space = 8 + 32 + 8 + 1)] // Adjusted space for the is_initialized field
-    pub timelock_account: Account<'info, TimelockAccount>,
-    #[account(mut)]
-    pub owner: Signer<'info>,
-    pub system_program: Program<'info, System>,
-}
+pub struct InitNFT<'info> {
+    /// CHECK: ok, we are passing in this account ourselves
+    #[account(mut, signer)]
+    pub signer: AccountInfo<'info>,
+    #[account(
+        init,
+        payer = signer,
+        mint::decimals = 0,
+        mint::authority = signer.key(),
+        mint::freeze_authority = signer.key(),
+    )]
+    pub mint: Account<'info, Mint>,
+    #[account(
+        init_if_needed,
+        payer = signer,
+        associated_token::mint = mint,
+        associated_token::authority = signer
+    )]
+    pub associated_token_account: Account<'info, TokenAccount>,
+    /// CHECK - address
+    #[account(
+        mut,
+        address=find_metadata_account(&mint.key()).0,
+    )]
+    pub metadata_account: AccountInfo<'info>, 
+    /// CHECK: address
+    #[account(
+        mut,
+        address=find_master_edition_account(&mint.key()).0,
+    )]
+    pub master_edition_account: AccountInfo<'info>,
 
-#[derive(Accounts)]
-pub struct Withdraw<'info> {
-    #[account(mut, has_one = owner, constraint = timelock_account.unlock_time > 0 && timelock_account.is_initialized)] // Ensure the account is initialized
-    pub timelock_account: Account<'info, TimelockAccount>,
-    #[account(mut)]
-    pub timelock_token_account: Account<'info, TokenAccount>,
-    #[account(mut)]
-    pub owner_token_account: Account<'info, TokenAccount>,
-    pub owner: Signer<'info>,
     pub token_program: Program<'info, Token>,
-}
-
-#[account]
-pub struct TimelockAccount {
-    pub owner: Pubkey,
-    pub unlock_time: i64,
-    pub is_initialized: bool, // Added to track initialization status
-}
-
-#[error_code]
-pub enum ErrorCode {
-    #[msg("The unlock time is invalid.")]
-    InvalidUnlockTime,
-    #[msg("The timelock account has not been initialized.")]
-    TimelockNotInitialized,
-    #[msg("The unlock time has not yet been reached.")]
-    UnlockTimeNotReached,
-    #[msg("This timelock account has already been initialized.")]
-    AlreadyInitialized,
-    #[msg("Unauthorized action.")]
-    Unauthorized,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_metadata_program: Program<'info, Metadata>,
+    pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
 }
