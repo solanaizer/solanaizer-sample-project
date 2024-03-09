@@ -17,10 +17,10 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
     url = "https://api.openai.com/v1/chat/completions"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
+        "Authorization": f"Bearer {api_key}",
+        "Accept": "application/json"
     }
-
-    prompt = f"Detect all vulnerabilities within the provided Rust smart contract code for Solana blockchain. \n '{file_content}' \n Respond in JSON format, Your responses should only be code, without explanation or formatting, filling the following properties for each vulnerability found \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
+    prompt = f"Detect all vulnerabilities within the provided Rust smart contract code for Solana blockchain. \n '{file_content}' \n Respond in JSON format, filling the following properties for each vulnerability found \n vulnerabilities: {[]} \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\n line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
 
     chat_request = ChatRequest(
         model="gpt-3.5-turbo",
@@ -35,7 +35,6 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
         response_content = response_json["choices"][0]["message"]["content"]
         if (response_content != ""):
             analyze_response_text(response_content)
-
         else:
             print("No vulnerabilities found.")
     else:
@@ -52,8 +51,10 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
 
 def analyze_response_text(response_content):
     try:
+        response_content = response_content.strip('`').strip('json')
         response_dict = json.loads(response_content)
         if "vulnerabilities" not in response_dict:
+            print(response_dict)
             print("No vulnerabilities found.")
             return
         
