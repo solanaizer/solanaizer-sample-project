@@ -26,6 +26,6 @@ jobs:
 
       - name: Run custom script
         working-directory: ./.github/scripts
-        run: python solanaizer.py --fp test.rs # This will execute your test.py script and output its results
+        run: python test.py #solanaizer.py --fp test.rs # This will execute your test.py script and output its results
 
       - run: echo "Hello World 👋🏻"
