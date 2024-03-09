@@ -31,7 +31,6 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
 
     if response.ok:
         response_json = response.json()
-        print(response_json)
         response_content = response_json["choices"][0]["message"]["content"]
         if (response_content != ""):
             analyze_response_text(response_content)
