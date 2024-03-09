@@ -29,10 +29,9 @@ Array<{{ severity: "HIGH"|"MEDIUM"|"LOW"; message: string; errorCode: string; fi
 
 If you find no errors, you should return an empty array.
 
-The filename key should contain the name of the module. 
 You are an Solana smart contract auditor. You are an expert at finding vulnerabilities that can be exploited by bad people.
 
-You have to find vulnerabilities in this smart contract written in Rust:
+Only output vulnerabilities which you are certain pose security risks.
 
 ```rs
 '{file_content}'
