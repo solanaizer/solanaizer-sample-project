@@ -1,4 +1,4 @@
-name: 'Audit Solana Contracts :)'
+name: 'Smart Contract Vulnerabilities'
 
 on:
   pull_request:
@@ -6,79 +6,12 @@ on:
 
 jobs:
   setup:
-    name: Run Audit
+    name: Run
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2 # This step checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+      - uses: actions/checkout@v4
 
-      - name: Set up Python environment
-        uses: actions/setup-python@v2
+      - name: Run Solana AI Smart Contract Audit
+        uses: solanaizer/solanaizer-action@0.1.10
         with:
-          python-version: '3.x' # Setup a Python 3.x environment to run your script
-
-      - name: Install dependencies
-        working-directory: ./.github/scripts
-        run: |
-          python -m pip install --upgrade pip # (Optional) Upgrade pip
-          pip install -r requirements.txt 
-          # Install any dependencies here, if your script requires any.
-
-      - name: Comment on PR  
-        uses: actions/github-script@v7
-        env:
-          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
-          OPENAPI_TOKEN: ${{ secrets.OPENAPI_TOKEN }}
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const execSync = require("child_process").execSync;
-            const raw = execSync("python ./.github/scripts/solanaizer.py", { encoding: "utf-8" });
-            
-            try {
-              JSON.parse(raw);
-            } catch(e) {
-              console.log('INVALID JSON FORMAT FROM 🐍:', raw)
-              process.exit(1)
-            }
-
-
-            const data = JSON.parse(raw).map(line => ({
-              ...line,
-              severity: line.severity === "HIGH" ? "High 🥵" : line.severity === "MEDIUM" ? "Medium 🤷🏻‍♂️" : "Low 😗",
-            }));
-            
-            const table = ["| Severity 🌡️  | Message 💭 | Error Code 😬 | Filename 📜 |"];
-            table.push("| :-------------: | ------------- | :-------------: | ------------- |");
-            
-            if (data.length !== 0) {
-              data.forEach(line => {
-                table.push(
-                  `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\`<br>Lines: \`${
-                    line.lines.join(", ")
-                  }\` |`,
-                );
-              });
-            }
-            
-            let body = `## Solanaizer Audit Results 🤖\n\nFind below all the vulnerabilities found in your smart contracts:`
-
-            if (data.length !== 0) {
-              body += `\n\n${table.join("\n")})}`
-              body += '\n<img src="https://media0.giphy.com/media/Xyj49ooQtsFD16z27J/giphy.gif"/>'
-              console.table(data);
-            } else {
-              body += '\n\n0 vulnerabilities found!\n\n<img src="https://media0.giphy.com/media/Ogak8XuKHLs6PYcqlp/giphy.gif"/>'
-              console.log('No vulnerabilities 😘')
-            }
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body,
-            });
-          
-            if (data.length !== 0) {
-              core.setFailed('Job run failed')
-            }
+          openapi-token: ${{ secrets.OPENAPI_TOKEN }}
