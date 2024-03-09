@@ -25,6 +25,7 @@ jobs:
           # Install any dependencies here, if your script requires any.
 
       - name: Run custom script
+        working-directory: ./.github/scripts
         run: python solanaizer.py --fp test.rs # This will execute your test.py script and output its results
 
       - run: echo "Hello World 👋🏻"
