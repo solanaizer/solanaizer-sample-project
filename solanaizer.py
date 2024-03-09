@@ -5,7 +5,7 @@ import sys
 from ai_validator import analyze_vulnerability_with_gpt
 from pathlib import Path
 
-API_KEY = "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"
+API_KEY = "YOUR_API_KEY"
 def validate_file_content(file_path):
     if file_path.suffix != ".rs":
         print("Not a Rust file.")

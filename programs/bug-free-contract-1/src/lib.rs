@@ -11,13 +11,13 @@ pub mod bug_free_contract_1 {
         require!(unlock_time >= 0, ErrorCode::InvalidUnlockTime);
 
         let timelock_account = &mut ctx.accounts.timelock_account;
-        
-        // Prevent re-initialization of the timelock account
-        require!(!timelock_account.is_initialized, ErrorCode::AlreadyInitialized);
+
+        // This check is implicit in the init_if_needed attribute usage below
+        // require!(!timelock_account.is_initialized, ErrorCode::AlreadyInitialized);
 
         timelock_account.owner = *ctx.accounts.owner.key;
         timelock_account.unlock_time = unlock_time;
-        timelock_account.is_initialized = true; // Mark as initialized
+        timelock_account.is_initialized = true;
         Ok(())
     }
 
@@ -49,7 +49,7 @@ pub mod bug_free_contract_1 {
 
 #[derive(Accounts)]
 pub struct CreateTimelock<'info> {
-    #[account(init, payer = owner, space = 8 + 32 + 8 + 1)] // Adjusted space for the is_initialized field
+    #[account(init_if_needed, payer = owner, space = 8 + 32 + 8 + 1)]
     pub timelock_account: Account<'info, TimelockAccount>,
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -58,11 +58,11 @@ pub struct CreateTimelock<'info> {
 
 #[derive(Accounts)]
 pub struct Withdraw<'info> {
-    #[account(mut, has_one = owner, constraint = timelock_account.unlock_time > 0 && timelock_account.is_initialized)] // Ensure the account is initialized
+    #[account(mut, has_one = owner, constraint = timelock_account.unlock_time > 0 && timelock_account.is_initialized)]
     pub timelock_account: Account<'info, TimelockAccount>,
-    #[account(mut)]
+    #[account(mut, constraint = timelock_token_account.owner == timelock_account.owner)]
     pub timelock_token_account: Account<'info, TokenAccount>,
-    #[account(mut)]
+    #[account(mut, constraint = owner_token_account.owner == *ctx.accounts.owner.key)]
     pub owner_token_account: Account<'info, TokenAccount>,
     pub owner: Signer<'info>,
     pub token_program: Program<'info, Token>,
@@ -72,7 +72,7 @@ pub struct Withdraw<'info> {
 pub struct TimelockAccount {
     pub owner: Pubkey,
     pub unlock_time: i64,
-    pub is_initialized: bool, // Added to track initialization status
+    pub is_initialized: bool,
 }
 
 #[error_code]

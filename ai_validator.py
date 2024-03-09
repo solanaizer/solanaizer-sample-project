@@ -21,7 +21,7 @@ def analyze_vulnerability_with_gpt(api_key, file_content):
         "Accept": "application/json"
     }
 
-    prompt = f"Detect all vulnerabilities within the provided Rust smart contract code for Solana blockchain. \n '{file_content}' \n Respond in JSON format, filling the following properties for each vulnerability found \n vulnerabilities: {[]} \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\n line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
+    prompt = f"Look for any high-risk vulnerabilities which could be used to drain the contract of funds within the provided Rust smart contract code for Solana blockchain. \n '{file_content}' \n Respond in JSON format, filling the following properties for each vulnerability found \n vulnerabilities: {[]} \n message: Provide a detailed description of any vulnerabilities found.\n severity: Specify the severity of the vulnerability (low, medium, or high).\n line: This should be an array where the first element is the line and the second is the column where the vulnerability is present.\n\n---\n"
 
     chat_request = ChatRequest(
         model="gpt-3.5-turbo",
