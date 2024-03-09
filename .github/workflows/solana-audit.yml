@@ -4,10 +4,25 @@ on:
   pull_request:
     types: [opened, reopened, closed, labeled]
 
-
 jobs:
   setup:
     name: Simple console.log
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2 # This step checks out your repository under $GITHUB_WORKSPACE, so your workflow can access it
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x" # Setup a Python 3.x environment to run your script
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip # (Optional) Upgrade pip
+          # Install any dependencies here, if your script requires any.
+
+      - name: Run custom script
+        run: python test.py # This will execute your test.py script and output its results
+
       - run: echo "Hello World 👋🏻"
