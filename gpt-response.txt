@@ -1,0 +1,24 @@
+{
+  "vulnerabilities": [
+    {
+      "message": "The 'unlock_time' parameter in the 'create_timelock' function is an i64 type, which allows for a potential integer overflow vulnerability.",
+      "severity": "medium",
+      "line": [9, 43]
+    },
+    {
+      "message": "There is no input validation for the 'amount' parameter in the 'withdraw' function, which could lead to a potential integer overflow or underflow vulnerability.",
+      "severity": "medium",
+      "line": [22, 26]
+    },
+    {
+      "message": "There is no validation or check for negative 'unlock_time' values in the 'create_timelock' function, which could lead to unexpected behavior.",
+      "severity": "low",
+      "line": [9, 43]
+    },
+    {
+      "message": "The 'owner' account is not validated to be the actual owner in the 'create_timelock' and 'withdraw' functions, which could lead to unauthorized access vulnerability.",
+      "severity": "high",
+      "line": [9, 52]
+    }
+  ]
+}
