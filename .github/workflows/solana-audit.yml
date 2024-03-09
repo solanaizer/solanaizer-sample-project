@@ -34,9 +34,16 @@ jobs:
 
             const table = ['| Severity  | Message | Error Code | Lines |\n']
             table.push('| ------------- | ------------- | ------------- | ------------- |\n')
+
+            JSON.parse(body).forEach(line => {
+              table.push(`| ${line.severity} | ${line.message} | ${line.errorCode} | ${JSON.stringify(line.lines)} |`)
+            })
+
+            console.table(JSON.parse(body));
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Solanaizer Audit Results 😜\n\n${markdownTable(JSON.parse(body))}`
+              body: `## Solanaizer Audit Results 😜\n\n${table})}`
             })
