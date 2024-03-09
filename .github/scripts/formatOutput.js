@@ -10,7 +10,7 @@ process.stdin.on('data', function(chunk) {
 process.stdin.on('end', function() {
     const inputJSON = inputChunks.join();
     const inputData = JSON.parse(inputJSON);
-    // console.table(inputData);
+    console.log(inputJSON);
 });
 
-return "TESTTESTETST"
+// return "TESTTESTETST"
