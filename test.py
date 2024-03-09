@@ -6,8 +6,8 @@ def get_test_json():
         {
         "severity": "HIGH",
         "message": "This error blablabla",
-        "errorCode": "REENTRY_ERROR";
-        "lines": [5,10];
+        "errorCode": "REENTRY_ERROR",
+        "lines": [5,10],
         }
 ]
     
