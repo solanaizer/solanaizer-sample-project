@@ -29,6 +29,8 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const { markdownTable } = require()'markdown-table')
+
             const execSync = require('child_process').execSync;
             const body = execSync('python ./.github/scripts/test.py', { encoding: 'utf-8' });
 
@@ -36,5 +38,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body
+              body: `## Solanaizer Audit Results 😜\n\n${markdownTable(JSON.parse(body))}`
             })
