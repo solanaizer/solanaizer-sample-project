@@ -32,17 +32,23 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const { markdownTable } = require('markdown-table')
             const execSync = require('child_process').execSync;
             const body = execSync('python ./.github/scripts/test.py', { encoding: 'utf-8' });
-
-            const data = JSON.parse(body).map(line => ({...line, severity: line.severity === 'HIGH' ? 'High 🥵' : line.severity === 'MEDIUM' ? 'Medium 🤷🏻‍♂️' : 'Low 😗'}));
-
+            
+            const data = JSON.parse(body).map(line => ({...line, severity: line.severity === 'HIGH' ? 'High 🥵' : line.severity === 'MEDIUM' ? 'Medium 🤷🏻‍♂️' : 'Low 😗'}))
+            
+            const table = ['| Severity 🌡️  | Message 💭 | Error Code 😬 | Lines #️⃣ |']
+            table.push('| :-------------: | ------------- | :-------------: | :-------------: |')
+            
+            data.forEach(line => {
+              table.push(`| ${line.severity} | ${line.message} | `${line.errorCode}` | `${line.lines.join(', ')}` |`)
+            })
+            
             console.table(data);
-
+            
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## Solanaizer Audit Results 😜\n\n${markdownTable(data)})}`
+              body: `## Solanaizer Audit Results 😜\n\n${table.join('\n')})}`
             })
