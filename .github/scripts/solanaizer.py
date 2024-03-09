@@ -15,13 +15,25 @@ def validate_file_content(file_path: Path):
 
     return analyze_vulnerability_with_gpt(API_KEY, content, file_path)
 
+def get_rust_files(directory):
+    rust_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".rs"):
+                rust_files.append(os.path.join(root, file))
+    return rust_files
+
 if __name__ == "__main__":
     suffix = "src/lib.rs"
-    bug_free = "programs/bug-free-contract-1/"
-    non_bug_free = "programs/buggy-contract-1/"
 
+    dir_to_search = "programs/"
 
-    file_path_bug_free = Path(bug_free + suffix)
-    file_path_buggy = Path(non_bug_free + suffix)
+    rust_files = get_rust_files(dir_to_search)
 
-    print(json.dumps(validate_file_content(file_path_bug_free) + validate_file_content(file_path_buggy)))
+    json_dumps = []
+    for rust_file in rust_files:
+        rust_file_path = Path(rust_file)
+        json_dumps += validate_file_content(rust_file_path)
+
+    print(json.dumps(json_dumps))
+

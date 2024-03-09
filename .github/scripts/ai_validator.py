@@ -29,9 +29,9 @@ Array<{{ severity: "HIGH"|"MEDIUM"|"LOW"; message: string; errorCode: string; fi
 
 If you find no errors, you should return an empty array.
 
-You are an Solana smart contract auditor. You are an expert at finding vulnerabilities that can be exploited by bad people.
+The filename key should contain the name of the module.
 
-Only output vulnerabilities which you are certain pose security risks.
+You are an Solana smart contract auditor. You are an expert at finding vulnerabilities that can be exploited by bad people.
 
 ```rs
 '{file_content}'
@@ -52,7 +52,7 @@ NEVER EVER EVER RETURN ANYTHING ELSE THAN JSON. DON'T RETURN MARKDOWN
     if response.ok:
         response_json = response.json()
         response_content = response_json["choices"][0]["message"]["content"].replace("```json", "").replace("```", "")
-        if (response_content != ""):
+        if (response_content != "" or response_content != None or response_content != []):
             parsed = json.loads(response_content)
             
             for item in parsed:
