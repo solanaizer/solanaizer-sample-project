@@ -40,11 +40,15 @@ jobs:
               severity: line.severity === "HIGH" ? "High 🥵" : line.severity === "MEDIUM" ? "Medium 🤷🏻‍♂️" : "Low 😗",
             }));
             
-            const table = ["| Severity 🌡️  | Message 💭 | Error Code 😬 | Lines #️⃣ |"];
-            table.push("| :-------------: | ------------- | :-------------: | :-------------: |");
+            const table = ["| Severity 🌡️  | Message 💭 | Error Code 😬 | Filename 📜 | Lines #️⃣ |"];
+            table.push("| :-------------: | ------------- | :-------------: | ------------- | | :-------------: |");
             
             data.forEach(line => {
-              table.push(`| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.lines.join(", ")}\` |`);
+              table.push(
+                `| ${line.severity} | ${line.message} | \`${line.errorCode}\` | \`${line.filename}\` | \`${
+                  line.lines.join(", ")
+                }\` |`,
+              );
             });
             
             console.table(data);
