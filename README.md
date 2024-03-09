@@ -16,13 +16,13 @@
 **Solanaizer** is a comprehensive Solana Smart Contrat Auditing Tool using AI 🤖 specifically designed for [Solana](https://solana.com/). Its primary purpose is to thoroughly review and analyze the code governing smart contracts written in [Rust](https://www.rust-lang.org/) for vulnerabilities. 🐛
 
 - **Objective:** 🎯
-  - *Solanaizer* aims to identify potential vulnerabilities, flaws, and security issues within smart contract code.
+  - _Solanaizer_ aims to identify potential vulnerabilities, flaws, and security issues within smart contract code.
 - **Importance:** ⚠️
-  - Given the decentralized nature of blockchain technology, it’s crucial to ensure that smart contracts are secure before deployment. *Solanaizer* provides this critical layer of protection.
+  - Given the decentralized nature of blockchain technology, it’s crucial to ensure that smart contracts are secure before deployment. _Solanaizer_ provides this critical layer of protection.
 - **Auditing Process:** 🕵🏻‍♀️
   - The tool conducts a detailed analysis of the contract’s code, performed by AI 🤖. It looks for security weaknesses, inefficient code, and other potential risks.
 - **LLMs (Language Models):** 💭
-  - To enhance its auditing capabilities, *Solanaizer* leverages various LLMs, including:
+  - To enhance its auditing capabilities, _Solanaizer_ leverages various LLMs, including:
     - [Stability.AI Stable Code 3B](https://stability.ai/news/stable-code-2024-llm-code-completion-release)
     - [GPT-4](https://openai.com/gpt-4)
     - [Claude3 Opus](https://www.anthropic.com/news/claude-3-family)
@@ -31,14 +31,14 @@ By using **Solanaizer**, developers and users have an extra level of confidence 
 
 Feel free to explore the repository for more in-depth details and documentation!
 
-## Getting Started 
+## Getting Started
 
 TBD
 
 ## Vulnerabilities
 
 TBD
- 
+
 ## Team 👨🏻‍💻👨🏻‍💻👨🏻‍💻👨🏻‍💻
 
 - [Alex Straw](https://github.com/alex-straw) (Engineer)

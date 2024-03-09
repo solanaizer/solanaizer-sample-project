@@ -1,0 +1,19 @@
+[package]
+name = "solanaizer-sample-project"
+version = "0.1.0"
+edition = "2021"
+description = "Created with Anchor"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "solanaizer_sample_project"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.29.0"
