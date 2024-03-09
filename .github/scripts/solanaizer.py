@@ -1,8 +1,7 @@
-from vulnerability_types import VulnerabilityResult
 import os
-import sys
 from ai_validator import analyze_vulnerability_with_gpt
 from pathlib import Path
+import json
 
 API_KEY = os.environ["OPENAPI_TOKEN"]
 
@@ -21,12 +20,8 @@ if __name__ == "__main__":
     bug_free = "programs/bug-free-contract-1/"
     non_bug_free = "programs/buggy-contract-1/"
 
-    results = []
 
     file_path_bug_free = Path(bug_free + suffix)
     file_path_buggy = Path(non_bug_free + suffix)
 
-    results.append(validate_file_content(file_path_bug_free)[0])
-    results.append(validate_file_content(file_path_buggy)[0])
-
-    print(results)
+    print(json.dumps(validate_file_content(file_path_bug_free) + validate_file_content(file_path_buggy)))
