@@ -3,3 +3,5 @@ __pycache__/hardcoded_vulnerability_checks.cpython-37.pyc
 __pycache__/vulnerability_types.cpython-37.pyc
 node_modules
 target
+.github/scripts/__pycache__/ai_validator.cpython-37.pyc
+.github/scripts/__pycache__/vulnerability_types.cpython-37.pyc

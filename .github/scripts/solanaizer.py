@@ -25,7 +25,8 @@ if __name__ == "__main__":
 
     file_path_bug_free = Path(bug_free + suffix)
     file_path_buggy = Path(non_bug_free + suffix)
-    results.append(validate_file_content(file_path_bug_free))
-    results.append(validate_file_content(file_path_buggy))
+
+    results.append(validate_file_content(file_path_bug_free)[0])
+    results.append(validate_file_content(file_path_buggy)[0])
 
     print(results)
