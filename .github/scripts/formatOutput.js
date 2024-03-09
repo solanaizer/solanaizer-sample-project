@@ -12,10 +12,7 @@ process.stdin.on('end', function() {
     const inputData = JSON.parse(inputJSON);
     // Convert inputData to Markdown table
     const markdownTable = convertToMarkdownTable(inputData);
-    // console.log(markdownTable);
-
-    const base64Table = Buffer.from(markdownTable).toString('base64');
-    console.log(base64Table);
+    console.log(markdownTable);
 });
 
 function convertToMarkdownTable(data) {
