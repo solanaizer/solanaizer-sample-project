@@ -1,11 +1,11 @@
-from hardcoded_vulnerability_checks import vulnerability_checks
 from vulnerability_types import VulnerabilityResult
 import os
 import sys
 from ai_validator import analyze_vulnerability_with_gpt
 from pathlib import Path
 
-API_KEY = "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"
+API_KEY = os.environ["OPENAPI_TOKEN"]
+
 def validate_file_content(file_path):
     if file_path.suffix != ".rs":
         print("Not a Rust file.")
@@ -14,20 +14,18 @@ def validate_file_content(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
 
-    analyze_vulnerability_with_gpt(API_KEY, content)
+    return analyze_vulnerability_with_gpt(API_KEY, content, file_path)
 
 if __name__ == "__main__":
-    import argparse
+    suffix = "src/lib.rs"
+    bug_free = "programs/bug-free-contract-1/"
+    non_bug_free = "programs/buggy-contract-1/"
 
-    parser = argparse.ArgumentParser(description='Validate Rust files')
-    parser.add_argument('--fp', metavar='filepath', required=True,
-                        help='the path to the file to validate')
+    results = []
 
-    args = parser.parse_args()
-    file_path_str = args.fp
+    file_path_bug_free = Path(bug_free + suffix)
+    file_path_buggy = Path(non_bug_free + suffix)
+    results.append(validate_file_content(file_path_bug_free))
+    results.append(validate_file_content(file_path_buggy))
 
-    file_path = Path(file_path_str)
-    if not file_path.exists():
-        print("File not found.")
-        sys.exit(1)
-    validate_file_content(file_path)
+    print(results)
