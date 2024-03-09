@@ -1,11 +1,10 @@
-from hardcoded_vulnerability_checks import vulnerability_checks
 from vulnerability_types import VulnerabilityResult
 import os
 import sys
 from ai_validator import analyze_vulnerability_with_gpt
 from pathlib import Path
 
-API_KEY = "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"
+API_KEY = os.environ["OPENAPI_TOKEN"]
 
 def validate_file_content(file_path):
     if file_path.suffix != ".rs":
