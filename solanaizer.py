@@ -1,6 +1,5 @@
 from hardcoded_vulnerability_checks import vulnerability_checks
 from vulnerability_types import VulnerabilityResult
-import re
 import os
 import sys
 from ai_validator import analyze_vulnerability_with_gpt
