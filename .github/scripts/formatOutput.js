@@ -16,8 +16,8 @@ process.stdin.on('end', function() {
 });
 
 function convertToMarkdownTable(data) {
-    let table = "| Severity | Message | Error Code | Lines |\n";
-    // table += "|----------|---------|------------|-------|\n";
+    let table = "| Severity | Message | Error Code | Lines |\n |----------|---------|------------|-------|\n";
+    // table += "";
     data.forEach(item => {
       table += `| ${item.severity} | ${item.message} | ${item.errorCode} | ${item.lines.join(', ')} |\n`;
     });
