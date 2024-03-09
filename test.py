@@ -1,7 +1,7 @@
 import json
 
 def get_test_json():
-    # Define a Python dictionary that we'll convert to a JSON object
+    #  cDefine a Python dictionary that we'll convert to a JSON object
     test_data = {
         "name": "John Doe",
         "age": 30,
