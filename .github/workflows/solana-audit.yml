@@ -2,7 +2,7 @@ name: "Audit Solana Contracts :)"
 
 on:
   pull_request:
-    types: [opened, reopened, closed, labeled]
+    types: [opened, synchronize]
 
 jobs:
   setup:
