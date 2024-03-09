@@ -12,3 +12,5 @@ process.stdin.on('end', function() {
     const inputData = JSON.parse(inputJSON);
     console.table(inputData);
 });
+
+return "TESTTESTETST"
