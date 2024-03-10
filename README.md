@@ -13,6 +13,15 @@
 
 [![Solanaizer AI Audit](https://github.com/solanaizer/solanaizer-sample-project/actions/workflows/solana-audit.yml/badge.svg)](https://github.com/solanaizer/solanaizer-sample-project/actions/workflows/solana-audit.yml)
 
+- **Project:** Solanaizer
+- **Event**: Encode Club AI Hackathon in London (Fri 8th March - Sun 10th March)
+
+The purpose of this sample project is to:
+
+- demonstrate Solanaizer, a Solana Smart Contract Auditing tool using AI, readily available on the [Github Action Marketplace](https://github.com/marketplace/actions/github-action-for-solanaizer)
+- provide a sample Solana project using the [Anchor Framework](https://github.com/coral-xyz/anchor) ⚓️
+- includes Rust smart contracts with vulnerabilities 👾, and some with no vulnerabilities ✅.
+
 ## Table of Content
 - [Description](#description)
 - [Getting Started](#getting-started)
@@ -21,6 +30,7 @@
   - [Add Code](#add-code)
 - [Vulnerabilities](#vulnerabilities)
 - [Preview](#preview)
+- [References](#references)
 - [Team](#team-)
 
 ## Description
@@ -103,6 +113,11 @@ Add your own smart contracts, create a pull request and you should see the repor
 #### In the Pull Request (Reviewer-friendly)
 
 <img width="860" alt="image" src="https://github.com/solanaizer/solanaizer-sample-project/assets/1114325/759d4e3a-ed0c-4ba6-bef5-b453a92bc750">
+
+## References
+
+- [Solanaizer on the Github Action Marketplace](https://github.com/marketplace/actions/github-action-for-solanaizer)
+- [solanaizer/solanaizer-action Repository](https://github.com/solanaizer/solanaizer-action)
 
 ## Team 👨🏻‍💻👨🏻‍💻👨🏻‍💻👨🏻‍💻
 
