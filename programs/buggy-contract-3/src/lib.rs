@@ -1,15 +1,8 @@
-use anchor_lang::prelude::*;
+fn main() {
+    let ptr: *mut i32 = std::ptr::null_mut();
 
-declare_id!("EJ51jW9nAV2vvfMk3GCqAjhQRiJg6FAugtrXSgXUbmyJ");
-
-#[program]
-pub mod buggy_contract_3 {
-    use super::*;
-
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
+    unsafe {
+        // Dereferencing a null pointer
+        println!("Dereferenced value: {}", *ptr);
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
