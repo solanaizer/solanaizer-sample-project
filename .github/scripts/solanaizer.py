@@ -1,27 +1,46 @@
-import os
-from ai_validator import analyze_vulnerability_with_gpt
-from pathlib import Path
-import json
+from openai import OpenAI
+from utils import run_inference, get_exploits
 
-API_KEY = os.environ["OPENAPI_TOKEN"]
+client = OpenAI()
 
-def validate_file_content(file_path: Path):
-    if file_path.suffix != ".rs":
-        print("Not a Rust file.")
-        return
+prompt = """
+The following Solana smart contract written in Rust may have either no vulnerabilities or one of the following vulnerabilities:
 
-    with open(file_path, 'r') as file:
-        content = file.read()
+{}
 
-    return analyze_vulnerability_with_gpt(API_KEY, content, file_path)
+1. Integer overflow.
+2  Integer underflow.
+3. Unsafe memory.
+4. Incorrect execution of authorization.
+5. Depth of cross-contract call over four.
+6. Reentrancy attack.
+7. Errors in logic and arithmetic.
+8. Computational units limit.
+
+Return the number of the vulnerability found, or 0 if there is no vulnerability. 
+"""
+
+
+def inference_gpt35_turbo(code_snippet, prompt, client=client) -> str:
+    print("Running inference for GPT-3.5-turbo.")
+    content = prompt.format(code_snippet)
+
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a Rust programmer who is finding security vulnerabilities in Solana projects.",
+            },
+            {"role": "user", "content": prompt.format(code_snippet)},
+        ],
+        temperature=0,
+    )
+    response_extracted = response.choices[0].message.content
+
+    return response_extracted
+
 
 if __name__ == "__main__":
-    suffix = "src/lib.rs"
-    bug_free = "programs/bug-free-contract-1/"
-    non_bug_free = "programs/buggy-contract-1/"
-
-
-    file_path_bug_free = Path(bug_free + suffix)
-    file_path_buggy = Path(non_bug_free + suffix)
-
-    print(json.dumps(validate_file_content(file_path_bug_free) + validate_file_content(file_path_buggy)))
+    filenames, exploits = get_exploits("exploits")
+    run_inference(exploits, filenames, inference_gpt35_turbo, "gpt-3.5-turbo", prompt)
