@@ -13,6 +13,18 @@
 
 [![Solanaizer AI Audit](https://github.com/solanaizer/solanaizer-sample-project/actions/workflows/solana-audit.yml/badge.svg)](https://github.com/solanaizer/solanaizer-sample-project/actions/workflows/solana-audit.yml)
 
+## Table of Content
+- [Description](#description)
+- [Getting Started](#getting-started)
+  - [Create a Solana project](#create-a-solana-project)
+  - [Add a Github Action using Solanaizer](#add-a-github-action-using-solanaizer)
+  - [Add Code](#add-code)
+- [Vulnerabilities](#vulnerabilities)
+- [Preview](#preview)
+- [Team](#team-)
+
+## Description
+
 **Solanaizer** is a comprehensive Solana Smart Contrat Auditing Tool using AI 🤖 specifically designed for [Solana](https://solana.com/). Its primary purpose is to thoroughly review and analyze the code governing smart contracts written in [Rust](https://www.rust-lang.org/) for vulnerabilities. 🐛
 
 - **Objective:** 🎯
@@ -33,11 +45,64 @@ Feel free to explore the repository for more in-depth details and documentation!
 
 ## Getting Started
 
-TBD
+### Create a Solana project
+
+```sh
+anchor init my-solana-project && cd my-solana-project
+```
+
+### Add a Github Action using Solanaizer
+
+```yml
+name: Solanaizer AI Audit
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check-out the repository
+        uses: actions/checkout@v4
+      - name: Solanaizer Audit
+        continue-on-error: false
+        uses: solanaizer/solanaizer-action
+```
+
+### Add Code
+
+Add your own smart contracts, create a pull request and you should see the reporting in your pull request!
 
 ## Vulnerabilities
 
-TBD
+1. Integer overflow.
+2. Integer underflow.
+3. Unsafe memory.
+4. Incorrect execution of authorization.
+5. Depth of cross-contract call over four.
+6. Reentrancy attack.
+7. Errors in logic and arithmetic.
+8. Computational units limit.
+
+## Preview
+
+### On Success
+
+<img width="855" alt="image" src="https://github.com/solanaizer/solanaizer-sample-project/assets/1114325/c9ce0e8c-68f0-4fba-be6b-56627246b8a6">
+
+### On Error
+
+#### In the Logs (Developer-friendly)
+
+<img width="1507" alt="image" src="https://github.com/solanaizer/solanaizer-sample-project/assets/1114325/093f8aaa-1b58-4f89-ae1f-db3113097a79">
+
+#### In the Pull Request (Reviewer-friendly)
+
+<img width="860" alt="image" src="https://github.com/solanaizer/solanaizer-sample-project/assets/1114325/759d4e3a-ed0c-4ba6-bef5-b453a92bc750">
 
 ## Team 👨🏻‍💻👨🏻‍💻👨🏻‍💻👨🏻‍💻
 
