@@ -6,7 +6,7 @@ describe("solanaizer-sample-project", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
-  const program = anchor.workspace.SolanaizerSampleProject as Program<SolanaizerSampleProject>;
+  const program = anchor.workspace.SolanaizerSampleProject as  Program<SolanaizerSampleProject>;
 
   it("Is initialized!", async () => {
     // Add your test here.
